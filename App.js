@@ -4,90 +4,50 @@ import { BarCodeScanner, Permissions } from 'expo';
 
 import Card from './components/Card';
 
+import { bdd } from './bdd';
+
 export default class App extends Component {
   state = {
     hasCameraPermission: null,
-    lastScannedUrl: null,
     isHidden: false,
     userInfo : {},
     cardIsOpen: false
   };
 
   // On request la permission d'utilisation de la camera
-  // Si ok on modifie le state de la variable hasCameraPermission à true
-  _requestCameraPermission = async () => {
+  // Si ok on modifie le state de la variable hasCameraPermission à granted
+  handleOnPressOpenCamera = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({
       hasCameraPermission: status === 'granted',
+      isHidden: true
     });
   };
 
-  _handleBarCodeRead = result => {
-    let objectUser = JSON.parse(result.data); 
+  // Fonction de lecture du QR Code
+  _handleQRCodeRead = result => {
+    // On récupère l'id 
+    let objectUser = JSON.parse(result.data);
 
-    for (const key in objectUser) {
-      if (objectUser.hasOwnProperty(key)) {
-        switch (key) {
-          case 'nom' :
-            this.setState(({userInfo}) => ({userInfo: {
-              ...userInfo,
-              nom: objectUser[key],
-            }}))
-            break;
-          case 'prenom' :
-            this.setState(({userInfo}) => ({userInfo: {
-              ...userInfo,
-              prenom: objectUser[key],
-            }}))
-            break;
-          case 'age' :
-            this.setState(({userInfo}) => ({userInfo: {
-              ...userInfo,
-              age: objectUser[key],
-            }}))
-            break;
-          case 'mail' :
-            this.setState(({userInfo}) => ({userInfo: {
-              ...userInfo,
-              mail: objectUser[key],
-            }}))
-            break;
-          case 'avatar' :
-            this.setState(({userInfo}) => ({userInfo: {
-              ...userInfo,
-              avatar: objectUser[key],
-            }}))
-            break;
-          default:
-            console.log('Case default');
-        }
+    // On parcours la bdd et on compare si l'id récupéré correspond à un id de la Bdd
+    for (const key in bdd) {
+      if (bdd.hasOwnProperty(key)) {
+        // Si ça correspond, on modifie le state avec les données du user et on met cardIsOpen à true
+        if ( key == objectUser.id) { this.setState({ userInfo: bdd[key], cardIsOpen: true}) }
       }
     }
-
-    // if (result.data !== this.state.lastScannedUrl) {
-    //   LayoutAnimation.spring();
-    //   this.setState({ lastScannedUrl: result.data });
-    // }
   };
 
-  // On cache le block d'accueil et on fait une demande d'autorisation d'utilisation de la caméra
-  handleOnPressOpenCamera = () => {
-    this.setState({isHidden: true});
-    this._requestCameraPermission();
-  }
-
   // On récupère le changement de state du children
-  handleDisplayCard = () => {
-    // On set le state cardIsOpen à true puis à false
-    this.setState({cardIsOpen: true})
-    setTimeout(() => { this.setState({cardIsOpen: false, userInfo: {}}) }, 500);
-
+  handleHideCard = () => {
+    // On set le state cardIsOpen à false
+    this.setState({cardIsOpen: false})
   }
 
-  // On affiche la carte seulement si l'object userInfo n'est pas vide et que la carte n'est pas déjà ouverte
+  // On affiche la carte seulement si l'object userInfo n'est pas vide et que l'état de la carte est ouverte
   displayCard = () => {
-    if (Object.keys(this.state.userInfo).length > 0 && !this.state.cardIsOpen) {
-      return <Card data={this.state.userInfo} displayCard={this.handleDisplayCard}/>
+    if (Object.keys(this.state.userInfo).length > 0 && this.state.cardIsOpen) {
+      return <Card data={this.state.userInfo} displayCard={this.handleHideCard}/>
     }
   }
 
@@ -106,7 +66,7 @@ export default class App extends Component {
         {
           this.state.hasCameraPermission !== null &&
           <BarCodeScanner
-            onBarCodeRead={this._handleBarCodeRead}
+            onBarCodeRead={this._handleQRCodeRead}
             style={styles.viewCamera}
           />
         }
@@ -136,7 +96,7 @@ const styles = StyleSheet.create({
   },
   wrapperButton: {
     padding: 16,
-    width: 130,
+    width: 230,
     backgroundColor: '#333',
     borderRadius: 50,
   },
