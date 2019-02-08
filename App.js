@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { BarCodeScanner, Permissions } from 'expo';
+import { BarCodeScanner, Permissions, Font } from 'expo';
 
 import Card from './components/Card';
 
@@ -11,8 +11,18 @@ export default class App extends Component {
     hasCameraPermission: null,
     isHidden: false,
     userInfo : {},
-    cardIsOpen: false
+    cardIsOpen: false,
+    fontLoaded: false
   };
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      'roboto-bold': require('./assets/fonts/RobotoCondensed-Bold.ttf'),
+      'roboto-regular': require('./assets/fonts/RobotoCondensed-Regular.ttf'),
+    });
+
+    this.setState({ fontLoaded: true });
+  }
 
   // On request la permission d'utilisation de la camera
   // Si ok on modifie le state de la variable hasCameraPermission à granted
@@ -53,30 +63,30 @@ export default class App extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        {
-          !this.state.isHidden &&
-          <View style={styles.wrapperApp}>
-            <Text style={styles.title}>Scanne et découvre !</Text>
-            <Image style={styles.qrcode} source={require('./assets/qrcode.png')}/>
-            <TouchableOpacity style={styles.wrapperButton} onPress={() => this.handleOnPressOpenCamera()}><Text style={styles.textButton}>Scanner</Text></TouchableOpacity>
-          </View>
-        }
-        
-        {
-          this.state.hasCameraPermission !== null &&
-          <BarCodeScanner
-            onBarCodeRead={this._handleQRCodeRead}
-            style={styles.viewCamera}
-          />
-        }
+        this.state.fontLoaded &&
+          <View style={styles.container}>
+          {
+            !this.state.isHidden &&
+            <View style={styles.wrapperApp}>
+              <Text style={styles.title}>Scanne et découvre !</Text>
+              <Image style={styles.qrcode} source={require('./assets/scan.png')}/>
+              <TouchableOpacity style={styles.wrapperButton} onPress={() => this.handleOnPressOpenCamera()}><Text style={styles.textButton}>Scanner</Text></TouchableOpacity>
+            </View>
+          }
+          
+          {
+            this.state.hasCameraPermission !== null &&
+            <BarCodeScanner
+              onBarCodeRead={this._handleQRCodeRead}
+              style={styles.viewCamera}
+            />
+          }
 
-        { this.displayCard() }
-      </View>
+          { this.displayCard() }
+        </View>
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -92,7 +102,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     textAlign: 'center',
-    color: '#333'
+    color: '#333',
+    fontFamily: 'roboto-bold'
   },
   wrapperButton: {
     padding: 16,
@@ -103,7 +114,8 @@ const styles = StyleSheet.create({
   textButton: {
     color: '#fff',
     fontSize: 18,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: 'roboto-regular'
   },
   wrapperApp: {
     alignItems: 'center',
@@ -119,7 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 15
   },
   qrcode: {
-    width: 230,
-    height: 230,
+    width: 180,
+    height: 180,
   }
 });
