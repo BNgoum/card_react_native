@@ -12,48 +12,26 @@ export default class Card extends Component {
     };
 
     _saveScreenshotAsync = async () => {
-        try {
-          let result = await takeSnapshotAsync(this.containerCard, {
+        let result = await takeSnapshotAsync(this.containerCard, {
             format: 'jpg'
         });
+
         this.setState({ snapshot: result });
 
-        // const asset = await MediaLibrary.createAssetAsync(this.state.snapshot);
-        // console.log('asset : ', asset);
         MediaLibrary.createAssetAsync(this.state.snapshot)
         .then(() => {
-            Alert.alert('L\'image est bien sauvegardé dans votre galerie !')
+            Alert.alert('L\'image vient de se sauvegarder dans votre galerie !');
         })
         .catch(error => {
             Alert.alert('Une erreur est apparu lors de l\'enregistrement de la Kart: ', error);
         });
-        } catch (e) {
-          console.log(e);
-        }
     };
-
-    takePictureAndCreateAlbum = async () => {
-        console.log('tpaca');
-        const { uri } = await this.camera.takePictureAsync();
-        console.log('uri', uri);
-        const asset = await MediaLibrary.createAssetAsync(uri);
-        console.log('asset', asset);
-        MediaLibrary.createAlbumAsync('Expo', asset)
-          .then(() => {
-            Alert.alert('Album created!')
-          })
-          .catch(error => {
-            Alert.alert('An Error Occurred!')
-          });
-      };
-    
 
     handleDisplay = () => {
         this.props.displayCard(false);            
     }
 
     render() {
-        console.log('SAve : ', this.state.snapshot)
         return (
             <View style={ styles.wrapperContent }>
                 <View style={ [styles.wrapperCard, this.props.data.isPro && styles.wrapperCardPro] } ref={view => {
@@ -69,19 +47,12 @@ export default class Card extends Component {
                     <Footer data={this.props.data} />
                 </View>
 
-                {this.state.snapshot ? (
-                <Image
-                    source={{ uri: `data:image/png;base64, ${this.state.snapshot}` }}
-                    style={{ width: 200, height: 200 }}
-                />
-                ) : null}
-
                 <TouchableOpacity style={ styles.wrapperClose } onPress={ () => this.handleDisplay() }>
                     <Text>Fermer</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={ styles.wrapperSave } onPress={ () => this._saveScreenshotAsync() }>
-                    <Text>Enregistrer</Text>
+                    <Text style={ styles.textButton }>Enregistrer</Text>
                 </TouchableOpacity>
             </View>
             
@@ -127,6 +98,7 @@ const styles = StyleSheet.create({
         padding: 12,
         position: 'absolute',
         bottom: '5%',
+        left: '20%',
         alignSelf: 'center',
         backgroundColor: '#fff',
         borderRadius: 50
@@ -135,7 +107,11 @@ const styles = StyleSheet.create({
         padding: 12,
         position: 'absolute',
         bottom: '5%',
+        right: '20%',
         backgroundColor: '#fff',
         borderRadius: 50
     },
+    textButton: {
+        fontFamily: 'roboto-regular'
+    }
   });

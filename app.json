@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "qr",
+    "name": "Kart",
     "description": "This project is really great.",
     "slug": "qr",
     "privacy": "public",
@@ -22,6 +22,9 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.bendo.kart"
     }
   }
 }

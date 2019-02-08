@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 
 export default class Content extends Component {
     render() {
@@ -9,7 +9,7 @@ export default class Content extends Component {
                 {
                     this.props.data.employe && 
                     <View style={ styles.containerInformation }>
-                        <FontAwesome name="birthday-cake" size={20} color={"#333"}/>
+                        <FontAwesome name="archive" size={20} color={"#333"}/>
                         <Text style={ styles.textCard }>{ this.props.data.employe }</Text>
                     </View>
                 }
@@ -25,7 +25,7 @@ export default class Content extends Component {
                 {
                     this.props.data.relation && 
                     <View style={ styles.containerInformation }>
-                        <FontAwesome name="birthday-cake" size={20} color={"#333"}/>
+                        <Entypo name="slideshare" size={20} color={"#333"}/>
                         <Text style={ styles.textCard }>{ this.props.data.relation }</Text>
                     </View>
                 }
@@ -45,7 +45,7 @@ export default class Content extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16
+        padding: 16,
     },
     textCard: {
         fontSize: 16,
@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 16
+        marginVertical: 8
     }
   });

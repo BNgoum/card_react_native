@@ -30,11 +30,16 @@ Deux QR Code déjà configurés sont accessibles : *./assets/qr_code_social.png*
 * Fonctionnalités Expo utilisées :
 	* BarCodeScanner : utilisation du composant React qui permet de détecter plusieurs types de code (qr, aztec, pdf417, ...) et de lire le contenu de ce dernier.
 	* Permissions : utilisation de la fonction askAsync() de type Permissions.CAMERA afin de demander l'autorisation d'ouverture et d'utilisation de la caméra.
+	* takeSnapshotAsync : cette bibliothèque permet de prendre une capture d'une View et de retourner l'image
+	* MediaLibrary : cette bibliothèque sauvegarde l'image de la capture précédente dans la galerie du téléphone.
  * Une base de données JSON contenant les informations des utilisateurs classées selon l'id (contenu dans bdd.js).
 
 ### Description technique
 Au lancement de l'application, l'utilisateur arrive sur une landing page. Lorsqu'il appuie sur le bouton Scanner, une popin de demande d'autorisation à utiliser la caméra est affiché, grâce à la fonction *_requestCameraPermission()*. 
-Une fois acceptée, la caméra arrière est activée et prête à lire un QR Code. Lorsque l'application détecte un QR Code, cela lance une fonction *_handleQRCodeRead()* qui permet de lire les informations contenu dans le QR Code.
-Si l'id contenu dans le QR Code correspond à un des id de la base de données, toutes les informations liées à cette id sont ajouté au state. Ce changement de state va, à son tour, déclencher une fonction *displayCard()* qui affiche la carte avec toutes les informations de l'utilisateur.
-Lorsque l'utilisateur appuie sur *fermer*, le composant enfant *Card* envoie à son parent l'information qu'il doit se fermer et le composant parent *App* change respectivement le state *userInfo* et *cardIsOpen* à {} et false.
 
+Une fois acceptée, la caméra arrière est activée et prête à lire un QR Code. Lorsque l'application détecte un QR Code, cela lance une fonction *_handleQRCodeRead()* qui permet de lire les informations contenu dans le QR Code.
+
+Si l'id contenu dans le QR Code correspond à un des id de la base de données, toutes les informations liées à cette id sont ajouté au state. Ce changement de state va, à son tour, déclencher une fonction *displayCard()* qui affiche la carte avec toutes les informations de l'utilisateur.
+
+Lorsque l'utilisateur appuie sur *fermer*, le composant enfant *Card* envoie à son parent l'information qu'il doit se fermer et le composant parent *App* change respectivement le state *userInfo* et *cardIsOpen* à {} et false.
+Si l'utilisateur appuie sur *enregistrer*, la Kart est sauvegardé dans la galerie du téléphone.
